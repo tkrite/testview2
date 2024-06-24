@@ -1,0 +1,17 @@
+{
+	"name": "DDD Studio 0.23.0",
+	"short_name": "DDD",
+	"start_url": "index.html",
+	"background_color": "#333333",
+	"display": "standalone",
+	"theme_color": "#333333",
+	"description": "A Web3D application that lets dance your favorite character.",
+	"icons": [
+		{
+			"src": "manifest.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	]
+}

@@ -1,0 +1,1 @@
+import{c as t}from"./ddd@DwDq534T.js";class n extends t{constructor(...r){super(...r),["opacity","map","alphaMap","emissiveMap","roughnessMap","metalnessMap"].forEach(e=>{Object.defineProperty(this,e,{get(){if(e in this.uniforms)return this.uniforms[e].value},set(s){e in this.uniforms&&(this.uniforms[e].value=s)}})})}}export{n as ExtendedShaderMaterial};

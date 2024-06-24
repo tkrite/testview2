@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- <meta http-equiv="Cache-Control" content="max-age=60"> -->
+  <meta name="theme-color" content="#222">
+  <meta name="description" content="REVOLVE">
+  <title>REVOLVE</title>
+  <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="./ddd/icon-512x512.png">
+  <link rel="manifest" href="./ddd/manifest@CKHnufNj.webmanifest" crossorigin="use-credentials">
+
+  <script>
+    function CheckRequiredFeatures() {
+      const unsupported = [];
+      window.DecompressionStream == null && unsupported.push("DecompressionStream");
+      !HTMLScriptElement.supports('importmap') && unsupported.push("importmap");
+      let W = window.WebAssembly; !(typeof W === 'object' && typeof W.instantiate === 'function') && unsupported.push("WebAssembly");
+      try { [0].at(-1) } catch { unsupported.push("ES2022") }
+      document.createElement('canvas').getContext('webgl2') == null && unsupported.push("WebGL2");
+      return unsupported;
+    }
+    const unsupported = CheckRequiredFeatures();
+    if (unsupported.length > 0) {
+      alert(unsupported.map(f => `${f}`).join(',') + " are not supported in your browser. Please use a modern browser.");
+    }
+  </script>
+
+
+
+  <style>
+    html {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: none;
+    }
+
+    body {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: none;
+    }
+
+    input[type=checkbox] {
+      filter: invert(100%) hue-rotate(180deg) brightness(1.25);
+      transform: scale(1.4);
+      margin: 3px -1px 0 0;
+    }
+
+    input[type="color"] {
+      width: 19px;
+      height: 19px;
+      vertical-align: -3px;
+      border: none;
+    }
+
+    .f100 {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+    }
+  </style>
+  <meta name="mobile-web-app-capable" content="yes">
+  <script type="importmap" data-ddd="replace">{"imports": {"three/addons/": "./ddd/jsm/","three": "./ddd/libs/three.module.js"}}</script>
+  <script type="module" crossorigin src="./ddd/ddd@DwDq534T.js"></script>
+  <link rel="stylesheet" crossorigin href="./ddd/ddd@CX4D8d_4.css">
+</head>
+
+<body id="__editor_html_body__" style="width:100%;height:100%;overflow:hidden">
+  <div id="__editor_overlay__" style="position:fixed;z-index:101;background-color: #222;width: 100%;height:100%;"></div>
+  <div id="__editor_header_container__" style="position:fixed;top:0;left:0;width:100%;border:0px;z-index: 100;">
+    <header id="__editor_header__" class="no_select">
+      <div class="top_menu_topnav">
+        <div class="top_menu_dropdown">
+          <div class="top_menu_dropbtn" onmouseup="UI.navi_menu_toggle(this)" data-i18n="menu.system">System</div>
+          <div class="top_menu_dropdown-content">
+            <a href="#" onmouseup="UI.open_about_window()" data-i18n="menu.system_sub.about">About</a>
+            <a href="#" onmouseup="UI.open_system_preferences_window()" data-i18n="menu.system_sub.system_preferences">System preferences</a>
+            <hr style="border:0px; border-bottom: 1px solid #555;margin-top:3px;margin-bottom:3px;">
+            <a href="#" onmouseup="C.modal_ok_cancel(window.T('g.confirmation'),window.T('g.are_you_sure'),{},(t)=>{if(t)DMC.reload();})" data-i18n="menu.system_sub.relaunch">Relaunch</a>
+            <hr style="border:0px; border-bottom: 1px solid #555;margin-top:3px;margin-bottom:3px;">
+            <a href="#" onmouseup="C.modal_ok_cancel(window.T('g.confirmation'),window.T('g.are_you_sure'),{},(t)=>{if(t){DMC.reset_all();}})" data-i18n="menu.system_sub.reset_all">Reset all</a>
+            <hr style="border:0px; border-bottom: 1px solid #555;margin-top:3px;margin-bottom:3px;">
+            <a href="#" onmouseup="window.close()"><span data-i18n="menu.system_sub.quit">Quit</span> <span style="margin-left:auto;color:gray;float: right;">⌘ W, ⌘ Q</span></a>
+          </div>
+        </div>
+        <div class="top_menu_dropdown disable_component_in_player">
+          <div class="top_menu_dropbtn" onmouseup="UI.navi_menu_toggle(this)" data-i18n="menu.file">File</div>
+          <div class="top_menu_dropdown-content">
+            <a href="#" onmouseup="C.modal_ok_cancel(window.T('g.confirmation'),window.T('g.are_you_sure'),{},(t)=>{if(t){DMC.reset()}})" data-i18n="menu.file_sub.new_project">New project</a>
+            <a href="#" onmouseup="UI.open_project()" data-i18n="menu.file_sub.open">Open</a>
+            <hr style="border:0px; border-bottom: 1px solid #555;margin-top:3px;margin-bottom:3px;">
+            <a href="#" onmouseup="Builder3D.save_project()"><span data-i18n="menu.file_sub.save_project">Save project</span> <span style="margin-left:auto;color:gray;float: right;">⌘ S</span></a>
+            <a href="#" onmouseup="Builder3D.save_project(null)"><span data-i18n="menu.file_sub.save_project_as">Save project as...</span><span style="margin-left:auto;color:gray;float: right;">Shift ⌘ S</span></a>
+            <hr style="border:0px; border-bottom: 1px solid #555;margin-top:3px;margin-bottom:3px;">
+            <div class="top_sub_menu_dropdown">
+              <span class="top_sub_menu_dropdown" style="float:left"><span style="float:left" data-i18n="menu.file_sub.export">Export</span><span style="float:right;color:#AAA"><i class="bi bi-sm bi-caret-right-fill" aria-hidden="true"></i></span></span>
+              <div class="top_sub_menu_dropdown-content" style="float:left">
+                <a href="#" onmouseup="UI.export_as('gltf')">GLTF</a>
+                <a href="#" onmouseup="UI.export_as('dae')">Collada</a>
+                <a href="#" onmouseup="UI.export_as('obj')">WaveFrontObject</a>
+                <a href="#" onmouseup="UI.export_as('stl')">STL</a>
+                <a href="#" onmouseup="UI.export_as('vpd')">VPD</a>
+                <a href="#" onmouseup="UI.export_as('ply')">PLY</a>
+                <a href="#" onmouseup="UI.export_as('usdz')">USDZ</a>
+                <a href="#" onmouseup="UI.export_as('draco')">Draco</a>
+              </div>
+              <br>
+            </div>
+          </div>
+        </div>
+        <div class="top_menu_dropdown disable_component_in_player">
+          <div class="top_menu_dropbtn" onmouseup="UI.navi_menu_toggle(this)" data-i18n="menu.edit">Edit</div>
+          <div class="top_menu_dropdown-content">
+            <a href="#" onmouseup="UI.edit_project()" data-i18n="menu.edit_sub.edit_project">Edit project</a>
+          </div>
+        </div>
+        <div class="top_menu_dropdown disable_component_in_player">
+          <div class="top_menu_dropbtn" onmouseup="UI.navi_menu_toggle(this)" data-i18n="menu.module">Module</div>
+          <div class="top_menu_dropdown-content" style="padding-left:0px;">
+            <a href="#" onmouseup="UI.open_module_manager()" data-i18n="menu.module_sub.module_manager">Module Manager</a>
+            <hr style="border:0px; border-bottom: 1px solid #555;margin-top:3px;margin-bottom:3px;">
+            <div class="top_sub_menu_dropdown">
+              <span class="top_sub_menu_dropdown" style="float:left"><span style="float:left" data-i18n="menu.module_sub.global">Globals</span><span style="float:right;color:#AAA"><i class="bi bi-sm bi-caret-right-fill" aria-hidden="true"></i></span></span>
+              <div class="top_sub_menu_dropdown-content" style="float:left" id="plugin_globals">
+              </div>
+              <br>
+            </div>
+            <a href="#" onmouseup="UI.open_image_processor()" data-i18n="menu.module_sub.image_processor">Image Processor</a>
+            <hr style="border:0px; border-bottom: 1px solid #555;margin-top:3px;margin-bottom:3px;">
+            <a href="#" onmouseup="UI.asset_browser()" class="asset_browser_launch_button" data-i18n="menu.module_sub.asset_browser">Asset Browser　<span style="margin-left:auto;color:gray;float: right;">Shift ⌘ P</span></a>
+            <hr style="border:0px; border-bottom: 1px solid #555;margin-top:3px;margin-bottom:3px;">
+            <a href="#" onmouseup="UI.open_project_exporter_as_standalone()" data-i18n="menu.module_sub.project_archiver">Project Archiver</a>
+            <!-- <a href="#" onmouseup="OpenModule('./plugins/coco_exporter/coco_exporter_plugin.js')" class="local_function_button" data-i18n="menu.module_sub.image_processor">COCO Exporter</a> -->
+            <hr style="border:0px; border-bottom: 1px solid #555;margin-top:3px;margin-bottom:3px;">
+            <a href="#" onmouseup="OpenModule('gltf_compressor')" class="local_function_button" data-i18n="menu.module_sub.gltf_compressor">GLTF Compressor</a>
+            <a href="#" onmouseup="OpenModule('ktx2_compressor')" data-i18n="menu.module_sub.ktx2_compressor">KTX2 Compressor</a>
+            <a href="#" onmouseup="UI.open_capture_panel()" data-i18n="menu.module_sub.video_capture">Capture</a>
+          </div>
+        </div>
+        <div class="top_menu_dropdown disable_component_in_player">
+          <div class="top_menu_dropbtn" onmouseup="UI.navi_menu_toggle(this)" data-i18n="menu.history">History</div>
+          <div class="top_menu_dropdown-content" id="history_menu">
+            <a href="#"></a>
+          </div>
+        </div>
+        <div class="top_menu_dropdown disable_component_in_player">
+          <div class="top_menu_dropbtn" onmouseup="UI.navi_menu_toggle(this)" data-i18n="menu.help">Help</div>
+          <div class="top_menu_dropdown-content">
+            <a href="#" onmouseup="UI.help_page('https://d3w.app/ddd/.doc')" data-i18n="menu.help_sub.documents">Documents</a>
+            <a href="#" onmouseup="UI.report_page()" data-i18n="menu.help_sub.report_an_issue">Report an issue...</a>
+            <a href="debug.html">Debug</a>
+          </div>
+        </div>
+
+        <div class="header-content tooltip" style="display: none;align-items: center;margin-left: auto;float:right;height:10px" id="xr_button"></div>
+      </div>
+      <div class="header_tools" style="height:25px; overflow-y: hidden;overflow-x: scroll">
+        <div class="header_group">
+          <div class="tooltip nav_button_outer disable_component_in_player">
+            <button class="nav_button_inner" onmouseup="Builder3D.save_project()"><i class="bi bi-save-fill" style="color:#DB8"></i><span class="tool_overlay_text"></span></button>
+            <span class="tooltiptext">Save project</span>
+          </div>
+          <div class="tooltip nav_button_outer disable_component_in_player">
+            <button class="nav_button_inner" onmouseup="Builder3D.save_project(null)"><i class="bi bi-save-fill" style="color:#DB8"></i><span class="tool_overlay_text">As</span></button>
+            <span class="tooltiptext">Save project as...</span>
+          </div>
+          <div class="tooltip nav_button_outer disable_component_in_player">
+            <button class="nav_button_inner" onmouseup="UI.open_project_exporter_as_standalone()"><i class="bi bi-file-earmark-zip-fill" style="color:#8CA"></i><span class="tool_overlay_text"></span></button>
+            <span class="tooltiptext" data-i18n="menu.module_sub.project_archiver">Archive scene as zip</span>
+          </div>
+
+          <div class="tooltip nav_button_outer">
+            <button class="nav_button_inner" id="__capture_button__" onmouseup="UI.open_capture_panel()"><i class="bi bi-camera-fill" style="color:#CAC"></i></button>
+            <span class="tooltiptext" data-i18n="menu.module_sub.video_capture">Capture</span>
+          </div>
+
+        </div>
+        <div class="nav_button_separator"> </div>
+        <div class="header_group">
+          <div class="tooltip nav_button_outer">
+            <button class="nav_button_inner" onmouseup="DMC.reset_physics()"><i class="bi bi-columns-gap" style="color:#FF0"></i><span class="tool_overlay_text">R</span></button>
+            <span class="tooltiptext">Reset physics</span>
+          </div>
+        </div>
+        <div class="nav_button_separator"> </div>
+        <div class="header_group">
+          <div class="tooltip nav_button_outer">
+            <button class="nav_button_inner" onmouseup="DMC.reset_camera()"><i class="bi bi-camera-video-fill" style="color:#AAA"></i><span class="tool_overlay_text">R</span></button>
+            <span class="tooltiptext">Reset current camera</span>
+          </div>
+        </div>
+        <div class="nav_button_separator"> </div>
+        <div class="tooltip header_button_outer">
+          <button class="header_button_inner" onmouseup="OpenModule('sanitize_deprecated_property')"><i class="bi bi-droplet-half" style="color:#AAA"></i><span class="tool_overlay_text"></span></button>
+          <span class="tooltiptext">Sanitize deprecated property.</span>
+        </div>
+        <div class="nav_button_separator"> </div>
+        <div class="tooltip header_button_outer disable_component_in_player">
+          <button class="header_button_inner" onmouseup="UI.open_image_processor()"><i class="bi bi-image" style="color:#4AF"></i><span class="tool_overlay_text"></span></button>
+          <span class="tooltiptext" data-i18n="menu.module_sub.image_processor">Image Processor</span>
+        </div>
+        <div class="nav_button_separator"> </div>
+        <div class="tooltip header_button_outer disable_component_in_player">
+          <button class="header_button_inner" onmouseup="OpenModule('ktx2_compressor')"><i class="bi bi-file-earmark-zip-fill" style="color:#4AF"></i><span class="tool_overlay_text">KX</span></button>
+          <span class="tooltiptext" data-i18n="menu.module_sub.ktx2_compressor">KTX2 Compressor</span>
+        </div>
+        <div class="tooltip header_button_outer local_function_button disable_component_in_player">
+          <button class="header_button_inner" onmouseup="OpenModule('gltf_compressor')"><i class="bi bi-file-earmark-zip-fill" style="color:#4A4"></i><span class="tool_overlay_text">GF</span></button>
+          <span class="tooltiptext" data-i18n="menu.module_sub.gltf_compressor">GLTF Compressor</span>
+        </div>
+        <div class="nav_button_separator"> </div>
+        <div class="tooltip header_button_outer asset_browser_launch_button disable_component_in_player">
+          <button class="header_button_inner" onmouseup="UI.asset_browser({new_window:event.ctrlKey||event.metaKey})"><i class="bi bi-grid-3x3-gap-fill" style="color:#4AF"></i><span class="tool_overlay_text"></span></button>
+          <span class="tooltiptext" data-i18n="menu.module_sub.asset_browser">Asset Browser</span>
+        </div>
+        <div class="nav_button_separator"> </div>
+        <div class="tooltip header_button_outer dev_tool_button">
+          <button class="header_button_inner" onmouseup="_toggle_texture_network_updater_()"><i class="bi bi-hdd-network" style="color:#2AF"></i><span class="tool_overlay_text"></span></button>
+          <span class="tooltiptext">Texture network updater</span>
+          <script>
+            async function _toggle_texture_network_updater_() {
+              const flags = await GetSystemPreferences();
+              flags.ui.system_flags.texture_network_updater = !flags.ui.system_flags.texture_network_updater;
+              DMC.texture_observer();
+              C.modal_processing('Texture network updater', 'Texture network updater is ' + (flags.ui.system_flags.texture_network_updater ? 'enabled' : 'disabled'), 1000);
+              await SetSystemPreferences(flags);
+              await C.sleep(1000);
+              C.close_modal_processing();
+            }
+          </script>
+
+        </div>
+        <div class="tooltip header_button_outer">
+          <button class="header_button_inner" onmouseup="window.onbeforeunload=null;DMC.reload();"><i class="bi bi-power" style="color:#B44"></i><span class="tool_overlay_text"></span></button>
+          <span class="tooltiptext">Force Relaunch</span>
+        </div>
+        <div class="tooltip header_button_outer dev_tool_button">
+          <button class="header_button_inner" onmouseup="OpenModule('dev_tool')"><i class="bi bi-bug" style="color:#B44"></i><span class="tool_overlay_text"></span></button>
+          <span class="tooltiptext">DevTool</span>
+        </div>
+        <div class="tooltip header_button_outer">
+          <button class="header_button_inner" onmouseup="window.resize_as_default()"><i class="bi bi-window-split" style="color:#AAA"></i><span class="tool_overlay_text"></span></button>
+          <span class="tooltiptext">Resize panels as default</span>
+        </div>
+        <div class="tooltip header_button_outer">
+          <button class="header_button_inner" onmouseup="window.resize_as_optimized()"><i class="bi bi-layout-text-window" style="color:#AAA"></i><span class="tool_overlay_text"></span></button>
+          <span class="tooltiptext">Wide window</span>
+        </div>
+        <div class="tooltip header_button_outer">
+          <button class="header_button_inner" onmouseup="DMC.toggle_fullscreen()"><i class="bi bi-fullscreen" style="color:#AAA"></i><span class="tool_overlay_text"></span></button>
+          <span class="tooltiptext">Full screen</span>
+        </div>
+        <div class="nav_button_separator"> </div>
+
+        <div class="tooltip header_button_outer">
+          <button class="header_button_inner" onmouseup="DMC.preset_profile('minimal')"><i class="bi bi-layers-half" style="color:#DBA"></i><span class="tool_overlay_text">m</span></button>
+          <span class="tooltiptext">Minimal profile</span>
+        </div>
+        <div class="tooltip header_button_outer">
+          <button class="header_button_inner" onmouseup="DMC.preset_profile('low')"><i class="bi bi-layers-half" style="color:#DBA"></i><span class="tool_overlay_text">L</span></button>
+          <span class="tooltiptext">Low profile</span>
+        </div>
+        <div class="tooltip header_button_outer">
+          <button class="header_button_inner" onmouseup="DMC.preset_profile('middle')"><i class="bi bi-layers-half" style="color:#DBA"></i><span class="tool_overlay_text">M</span></button>
+          <span class="tooltiptext">Middle profile</span>
+        </div>
+        <div class="tooltip header_button_outer">
+          <button class="header_button_inner" onmouseup="DMC.preset_profile('high')"><i class="bi bi-layers-half" style="color:#DBA"></i><span class="tool_overlay_text">H</span></button>
+          <span class="tooltiptext">High profile</span>
+        </div>
+      </div>
+    </header>
+    <nav id="__editor_nav__" class="no_select" style="height:25px; overflow-y: hidden;overflow-x: scroll;">
+      <div class="container">
+        <div class="header-wrapper">
+          <div class="header-box-wrapper">
+            <div class="nav_group">
+              <div class="header-content tooltip" style="width: 60px;margin-left:3px;">
+                <button style="display:flex;align-items:center; width: 60px;height: 17px;font-size:14px;" id="play_button" class="start_world_time_component"><i class="bi bi-caret-right-fill"></i></button>
+                <span class="tooltiptext">Play</span>
+              </div>
+              <div class="header-content tooltip" style="width: 30px;margin-left:3px;">
+                <button style="display:flex;align-items:center;width: 30px;height: 17px;font-size:14px;padding-top:1px;" id="stop_button" class="stop_world_time_component"><i class="bi bi-stop-fill"></i></button>
+                <span class="tooltiptext">Stop</span>
+              </div>
+              <div class="header-content tooltip" style="width:100px;border:2px solid #444;display:none">
+                <div id="bgm_volume_component" style="width:250px"></div>
+                <span class="tooltiptext">BGM volume</span>
+              </div>
+            </div>
+            <div class="nav_button_separator"> </div>
+            <div class="nav_button_separator"> </div>
+            <div class="nav_group">
+              <div class="header-content tooltip">
+                <select id="camera_selector" style="display: flex;align-items: center;font-size:12px;width:auto;height:20px;" onchange="UI.select_camera_by_selector(event)"></select>
+                <span class="tooltiptext">Select a current camera</span>
+              </div>
+              <div class="header-content tooltip">
+                <select id="load_file_behavior" style="display: flex;align-items: center;font-size:12px;width:auto;height:20px;">
+                  <option value="append_to_scene" data-i18n="header_panel.append_to_scene">Append to scene</option>
+                  <option value="replace" data-i18n="header_panel.replace_current_object">Replace current object</option>
+                  <option value="append_as_child" data-i18n="header_panel.append_as_child">Append as child</option>
+                </select>
+                <span class="tooltiptext">Open file behavior.</span>
+              </div>
+              <div class="header-content tooltip" style="margin-left:5px">
+                <button class="header_button_inner" id="replace_mode_trs_button"><i class="bi bi-arrow-left-right" style="color:#AAA"></i><span class="tool_overlay_text">TRS</span></button>
+                <span class="tooltiptext">Reference TRS when replaced.</span>
+              </div>
+              <div class="header-content tooltip" style="margin-left:5px">
+                <button class="header_button_inner" id="replace_mode_material_button"><i class="bi bi-arrow-left-right" style="color:#AAA"></i><span class="tool_overlay_text">Mtl</span></button>
+                <span class="tooltiptext">Reference material when replaced.</span>
+              </div>
+              <div class="header-content tooltip" style="margin-left:5px">
+                <button class="header_button_inner" id="replace_mode_morphing_button"><i class="bi bi-arrow-left-right" style="color:#AAA"></i><span class="tool_overlay_text">Mph</span></button>
+                <span class="tooltiptext">Reference morphing when replaced.</span>
+              </div>
+              <div class="header-content tooltip" style="margin-left:5px">
+                <button class="header_button_inner" id="replace_mode_action_button"><i class="bi bi-arrow-left-right" style="color:#AAA"></i><span class="tool_overlay_text">Act</span></button>
+                <span class="tooltiptext">Reference action properties when replaced.</span>
+              </div>
+              <div class="header-content tooltip" style="margin-left:5px">
+                <button class="header_button_inner" id="replace_mode_ddd_prop_button"><i class="bi bi-arrow-left-right" style="color:#AAA"></i><span class="tool_overlay_text">DDD</span></button>
+                <span class="tooltiptext">Reference DDD properties when replaced.</span>
+              </div>
+              <div class="header-content tooltip" style="margin-left:5px">
+                <button class="header_button_inner" id="replace_mode_object_prop_button"><i class="bi bi-arrow-left-right" style="color:#AAA"></i><span class="tool_overlay_text">Prp</span></button>
+                <span class="tooltiptext">Reference other object properties when replaced.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div id="__editor_main_body__" class="f100">
+    <div id="__editor_overlay_window__" style="border:0px;margin:0px;padding:0px;z-index: 913;position:fixed"></div>
+    <div id="__editor_content_window__" style="border:0px;width: 100%;height:100%;">
+      <div id="__editor_middle_content__" class="f100">
+
+        <!--  -------------------------------------------------- Left Contents ----------------------------------------------------  -->
+        <div id="__editor_left_main_all__" class="resizable-left f100">
+          <div id="__editor_main_panel__" class="resizable-top f100" style="position:relative">
+
+            <!-- <aside id="__editor_left_side_panel__" class="no_select left resizable-left">
+              <div class="resizable-top">
+                <div style="margin-top:70px"></div>
+                <div class="nowrap flex-center"
+                  style="width:100%;height:20px;background-color:#444;border-top:1px solid #555;border-bottom:1px solid #555;font-size:12px">
+                  <select id="__editor_tool_selector__" style="width:100%;height:20px">
+                  </select>
+                </div>
+              </div>
+              <div class="resizable-bottom">
+              </div>
+            </aside> -->
+
+            <!--  -------------------------------------------------- Main ----------------------------------------------------  -->
+            <style>
+              .main_frame {
+                background-color: #333333;
+                position: relative;
+                left: 0px;
+                top: 72px;
+                padding: 0px;
+                margin: 0px;
+                width: 100%;
+                height: calc(100% - 71px);
+                min-width: 16px;
+                min-height: 16px;
+              }
+            </style>
+            <main id="main_frame" role="main" data-type="main" class="f100 main_frame no_select" style="opacity:1"></main>
+
+          </div>
+
+          <!--  -------------------------------------------------- Footer ----------------------------------------------------  -->
+          <div id="__editor_footer__" class="resizable-bottom" style="border-top:1px solid #444;">
+            <div id="__editor_footer_left__" class="resizable-left" style="position:relative;background-color: #282828;">
+              <div class="tab file_browser_left_panel_header" style="overflow: hidden;">
+                <button class="tablinks no_item" id="__editor_left_panel_tab_storage_button__" onclick="open_tab(event, 'file_browser_left_panel', this, '__editor_footer_left__', '__editor_footer_right__')"><i class="bi bi-folder"></i></button>
+                <button class="tablinks no_item" id="__editor_left_panel_tab_timeline_button__" onclick="open_tab(event, 'timeline_left_panel', this, '__editor_footer_left__', '__editor_footer_right__')"><i class="bi bi-filter-left"></i></button>
+              </div>
+              <div id="file_browser_left_panel" class="tabcontent file_browser_left_panel">
+                <div class="native_io_mode_only" id="native_io_under_left" style="width:100%;height:100%;display:flex;align-items: center;justify-content: center;">
+                  <div style="color:#888">-</div>
+                </div>
+                <div class="online_io_mode_only" style="width:100%;height:100%;display:flex;align-items: center;justify-content: center;">
+                  <div style="color:#888">-</div>
+                </div>
+              </div>
+              <div id="timeline_left_panel" class="tabcontent timeline_left_panel"></div>
+            </div>
+            <div id="__editor_footer_right__" class="resizable-right">
+              <div id="file_browser_right_panel" class="file_browser_right_panel">
+                <div class="native_io_mode_only" style="width:100%;height:100%">
+                  <div id="__editor_search_data_list_on_file_browser_for_local_window__" style="width:calc(100% - 2px);height:calc(100% - 2px)" data-type="local_search_window">
+                    <div style="left:0px;width:calc(100% - 2px);height:20px;background:#333;font-size:12px;display:flex;align-items:center;">
+                      <div class="tooltip" style="margin-left:4px">
+                        <button><i onclick="search_data_list_on_file_browser_for_local_mask('all')" class="bi bi-sm bi-circle all"></i></button>
+                        <span class="tooltiptext">All</span>
+                      </div>
+                      <div class="tooltip" style="margin-left:4px">
+                        <button><i onclick="search_data_list_on_file_browser_for_local_mask('scene')" class="bi bi-sm bi-file-earmark-zip-fill scene mask_group"></i></button>
+                        <span class="tooltiptext">Only Scene</span>
+                      </div>
+                      <div class="tooltip" style="margin-left:4px">
+                        <button><i onclick="search_data_list_on_file_browser_for_local_mask('model')" class="bi bi-sm bi-box model mask_group"></i></button>
+                        <span class="tooltiptext">Only Model</span>
+                      </div>
+                      <div class="tooltip" style="margin-left:4px">
+                        <button><i onclick="search_data_list_on_file_browser_for_local_mask('motion')" class="bi bi-sm bi-person-lines-fill motion mask_group"></i></button>
+                        <span class="tooltiptext">Only Motion</span>
+                      </div>
+                      <i class="bi bi-sm bi-search" style="margin-left:4px"></i>
+                      <input id="__editor_search_box_on_file_browser_for_local__" style="margin-right:4px;margin-left:4px">
+                      <div class="tooltip" style="margin-left:4px">
+                        <button onclick="search_data_list_on_file_browser_for_local_refresh()"><i class="bi bi-sm bi-arrow-repeat"></i></button>
+                        <span class="tooltiptext">Refresh</span>
+                      </div>
+                      <div class="tooltip" style="margin-left:4px">
+                        <button onclick="search_data_list_on_file_browser_for_local_sort_by_name()"><i class="bi bi-sm bi-sort-alpha-down-alt"></i></button>
+                        <span class="tooltiptext">Sort by Name</span>
+                      </div>
+                      <div class="tooltip" style="margin-left:4px">
+                        <button onclick="search_data_list_on_file_browser_for_local_sort_by_date()"><i class="bi bi-sm bi-calendar"></i></button>
+                        <span class="tooltiptext">Sort by Date</span>
+                      </div>
+                      <div class="tooltip" style="margin-left:4px">
+                        <button onclick="search_data_list_on_file_browser_for_local_sort_by_size_browser_for_local_sort_by_date()"><i class="bi bi-sm bi-sort-numeric-down"></i></button>
+                        <span class="tooltiptext">Sort by Size</span>
+                      </div>
+                      <span id="__editor_search_path_on_file_browser_for_local__" class="nowrap" style="margin-left:4px">Drag and drop here</span>
+                      <button id="__editor_search_path_clear_button_on_file_browser_for_local__" style="margin-left:auto"><i class="bi bi-trash"></i></button>
+                    </div>
+                    <div id="__editor_search_data_list_on_file_browser_for_local__" style="width:calc(100% - 2px);height:calc(100% - 20px - 2px);overflow-y:scroll">
+                    </div>
+                  </div>
+                </div>
+                <div class="online_io_mode_only" style="width:100%;height:100%;display:flex;align-items: center;justify-content: center;">
+                  <div style="color:#888">Please set the external storage.</div>
+                </div>
+              </div>
+              <div id="timeline_right_panel" class="timeline_right_panel"></div>
+            </div>
+          </div>
+        </div>
+
+        <!--  -------------------------------------------------- Right ----------------------------------------------------  -->
+        <div class="resizable-right" id="__editor_right_property_window__" style="overflow:hidden">
+          <div id="__editor_right_side_panel_object_tree__" class="resizable-top">
+            <div id="__editor_right_side_panel_inner_scroll_block__" style="box-sizing: border-box;overflow:hidden;overflow-y:scroll;width:calc(100% - 6px);height:calc(100% - 4px);position:relative">
+              <div class="scene_menu" style="box-sizing: border-box;outline:1px solid #000;z-index: 1;left:0px;top:72px;position:sticky;overflow:hidden;display: flex;background-color: #252525;padding-bottom:1px;width:100%;height:23px;align-items: center;padding-left:4px;border-top: 0px solid #444;">
+                <div class="tooltip" style="margin-right:2px">
+                  <button class="tree_component_shortcut_button" onclick="UI_Tree.refresh()">
+                    <i class="bi bi-arrow-repeat" style="position:absolute;"></i>
+                  </button>
+                  <span class="tooltiptext">Refresh</span>
+                </div>
+                <div class="tooltip" style="margin-right:2px;">
+                  <button class="tree_component_shortcut_button" onclick="UI_Tree.show_all_helpers()">
+                    <i class="bi bi-eye" style="position:absolute;"></i><span class="tree_component_shortcut_icon_text_shadow">H</span>
+                  </button>
+                  <span class="tooltiptext">Show all helpers</span>
+                </div>
+                <div class="tooltip" style="margin-right:2px">
+                  <button class="tree_component_shortcut_button" onclick="UI_Tree.hide_all_helpers()">
+                    <i class="bi bi-eye-slash" style="position:absolute;"></i><span class="tree_component_shortcut_icon_text_shadow">H</span>
+                  </button>
+                  <span class="tooltiptext">Hide all helpers</span>
+                </div>
+                <div class="tooltip" style="margin-right:2px">
+                  <button class="tree_component_shortcut_button" onclick="UI_Tree.close_all_item()">
+                    <i class="bi bi-lg bi-chevron-left" style="position:absolute;"></i>
+                  </button>
+                  <span class="tooltiptext">Close all</span>
+                </div>
+                <div class="tooltip" style="margin-right:2px">
+                  <button class="tree_component_shortcut_button" onclick="UI_Tree.extract_all_item()">
+                    <i class="bi bi-lg bi-chevron-right" style="position:absolute;"></i>
+                  </button>
+                  <span class="tooltiptext">Extract all</span>
+                </div>
+                <div class="tooltip" style="margin-right:2px">
+                  <button class="tree_component_shortcut_button" onclick="UI_Tree.move_to_previous()">
+                    <i class="bi bi-arrow-up" style="position:absolute;"></i>
+                  </button>
+                  <span class="tooltiptext">Move a current node to previous</span>
+                </div>
+                <div class="tooltip" style="margin-right:2px">
+                  <button class="tree_component_shortcut_button" onclick="UI_Tree.move_to_next()">
+                    <i class="bi bi-arrow-down" style="position:absolute;"></i>
+                  </button>
+                  <span class="tooltiptext">Move a current node to next</span>
+                </div>
+                <div class="tooltip" style="margin-right:2px">
+                  <button class="tree_component_shortcut_button" onclick="UI_Tree.move_to_parent()">
+                    <i class="bi bi-arrow-left" style="position:absolute;"></i>
+                  </button>
+                  <span class="tooltiptext">Move a current node to parent</span>
+                </div>
+                <div class="tooltip" style="margin-right:2px">
+                  <button class="tree_component_shortcut_button" onclick="UI_Tree.move_to_child()">
+                    <i class="bi bi-arrow-right" style="position:absolute;"></i>
+                  </button>
+                  <span class="tooltiptext">Move a current node to child</span>
+                </div>
+              </div>
+
+              <div id="__editor_right_side_panel_object_tree_inner__" class="no_select" data-type="object_tree" style=" z-index: 0;position:absolute;left:1px;top:98px;box-sizing: border-box;width:calc(100% - 1px);background-color:#333;border-radius:3px;border: 2px solid #222">
+              </div>
+              <!-- <div id="__editor_right_side_panel_object_tree_inner__" class="no_select" data-type="object_tree" style="width:100%;height:100%;background-color:#333;padding-right:1px;margin-left:-2px;margin-right:2px;border-radius:3px;border: 2px solid #222"></div> -->
+            </div>
+            <!-- <div style="width:100%;height:20px;background-color:black"><input id="tree_interactive_console" style="width:calc(100% - 5px);height:20px;padding-left:5px;" placeholder="Interactive Console"></div> -->
+
+          </div>
+          <div class="resizable-bottom right dark">
+
+            <!--  -------------------------------------------------- Tab ----------------------------------------------------  -->
+            <!-- <div style="float:left;width:25px;height:100%;background:red"> -->
+            <style>
+              .right_side_panel_tab_block {
+                display: inline-block;
+                padding-top: 2px;
+              }
+
+              .tab_left>.right_side_panel_tab_block>button {
+                border-radius: 5px 0 0 5px;
+                border: 1px solid #666;
+                width: 20px;
+                height: 20px;
+              }
+
+
+              /* Style the tab */
+              .tab_left {
+                /* overflow: hidden;
+                white-space: nowrap; */
+
+                /* background-color: red; */
+                /* background-color: #222;
+                padding: 0px;
+                margin: 0px;
+                border: 1px solid #444;
+                padding-top: 1px;
+                width: 100%;
+                height: 22px; */
+              }
+
+              /* Style the buttons inside the tab */
+              .tab_left button {
+                /* display: flex;
+                background-color: #333;
+                color: #eee;
+                float: left;
+                border: 1px solid #444;
+                border-bottom: 1px solid #333;
+                outline: none;
+                cursor: pointer;
+                padding-top: 2px;
+                transition: 0.3s;
+                font-size: 15px;
+                width: 25px;
+                height: 22px;
+                border-radius: 5px 5px 0 0; */
+              }
+
+              /* Change background color of buttons on hover */
+              .tab_left button:hover {
+                background-color: #557;
+                outline: none;
+                border: 1px solid #444;
+                border-bottom: 1px solid #333;
+                color: #aaa;
+              }
+
+              /* Create an active/current tablink class */
+              .tab_left button.active {
+                box-shadow: 0px 0px 5px #77f;
+                background-color: #77f;
+                outline: none;
+                border: 1px solid #446;
+                border-bottom: 1px solid #777;
+                color: white;
+              }
+
+              .tab_left button.no_item {
+                opacity: 0.5;
+              }
+
+              .tab_left button.no_item_and_hidden {
+                display: none;
+              }
+            </style>
+            <div class="tab_left no_select scroll_y no_select" id="right_side_panel_main_tab" style="text-align: right;float:left;width:24px;border-right:1px solid #333;height:100%;">
+              <div class="tooltip right_side_panel_tab_block" style="margin-top:3px">
+                <button class="tablinks" id="right_side_panel_tab_object_button" onclick="open_tab(event, 'right_side_panel_tab_object', this, '__editor_right_property_window__')"><i class="bi bi-box" style="color:#B63;padding-top:1px;padding-left:2px"></i></button>
+                <span class="tooltiptext" style="left:10px;top:20px">Object Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks" id="right_side_panel_tab_multiple_objects_button" onclick="open_tab(event, 'right_side_panel_tab_multiple_objects', this, '__editor_right_property_window__')"><i class="bi bi-boxes" style="color:#B63;padding-top:1px;padding-left:2px"></i></button>
+                <span class="tooltiptext" style="left:10px;top:20px">Multiple Objects Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks" id="right_side_panel_tab_light_button" onclick="open_tab(event, 'right_side_panel_tab_light', this, '__editor_right_property_window__')"><i class="bi bi-sun" style="color:#BB3;padding-top:1px;padding-left:1px"></i></button>
+                <span class="tooltiptext" style="left:10px;top:20px">Light Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks no_item" id="right_side_panel_tab_material_button" onclick="open_tab(event, 'right_side_panel_tab_material', this, '__editor_right_property_window__')"><i class="bi bi-slash-circle-fill" style="color:#47B;padding-top:1px;padding-left:1px"></i></button>
+                <span class="tooltiptext" style="left:40px;top:20px">Material Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks no_item" id="right_side_panel_tab_morphing_button" onclick="open_tab(event, 'right_side_panel_tab_morphing', this, '__editor_right_property_window__')"><i class="bi bi-hexagon-half" style="color:#A94;padding-top:1px;padding-left:1px"></i></button>
+                <span class="tooltiptext" style="left:70px;top:20px">Morphing Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks no_item" id="right_side_panel_tab_bone_button" onclick="open_tab(event, 'right_side_panel_tab_bone', this, '__editor_right_property_window__')"><i class="bi bi-universal-access" style="color:#AA0;padding-top:1px;padding-left:1px"></i></button>
+                <span class="tooltiptext" style="left:70px;top:20px">Bone/Motion Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks no_item" id="right_side_panel_tab_rigid_body_button" onclick="open_tab(event, 'right_side_panel_tab_rigid_body', this, '__editor_right_property_window__')"><i class="bi bi-bricks" style="color:#9A4"></i></button>
+                <span class="tooltiptext" style="left:70px;top:20px">Rigid Body Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks no_item" id="right_side_panel_tab_constraint_button" onclick="open_tab(event, 'right_side_panel_tab_constraint', this, '__editor_right_property_window__')"><i class="bi bi-node-plus" style="color:#9A4"></i></button>
+                <span class="tooltiptext" style="left:70px;top:20px">Constraint Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block" style="margin-top:3px;">
+                <button class="tablinks" id="right_side_panel_tab_graphics_button" onclick="open_tab(event, 'right_side_panel_tab_graphics', this, '__editor_right_property_window__')"><i class="bi bi-tv" style="padding-top:3px;padding-left:1px;color:#FFF"></i></button>
+                <span class="tooltiptext" style="left:70px;top:20px;">Graphics Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block" style="margin-top:5px">
+                <button class="tablinks" id="right_side_panel_tab_system_button" onclick="open_tab(event, 'right_side_panel_tab_system', this, '__editor_right_property_window__')"><i class="bi bi-tools" style="color:#FFF;padding-top:1px;padding-left:1px"></i></button>
+                <span class="tooltiptext" style="left:70px;top:20px">System Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block" style="margin-top:5px">
+                <button class="tablinks" id="right_side_panel_tab_storage_button" onclick="open_tab(event, 'right_side_panel_tab_storage', this, '__editor_right_property_window__')"><i class="bi bi-cloud" style="color:#7BF;padding-top:1px;padding-left:1px"></i></button>
+                <span class="tooltiptext" style="left:70px;top:20px">Storage Panel</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks" id="right_side_panel_tab_terminal_button" onclick="open_tab(event, 'right_side_panel_tab_terminal', this, '__editor_right_property_window__');window.terminal_log_counter=0; document.getElementById('terminal_badge').innerHTML=''">
+                  <div id="terminal_badge" style="font-size:12px;position:absolute;margin-top:-2px;border-radius:5px;padding-left:1px;padding-right:1px;background-color:#FF000088;border:1px solid #444">
+                  </div>
+                  <i class="bi bi-terminal" style="color:#888;padding-top:1px;padding-left:1px"></i>
+                </button>
+                <span class="tooltiptext" style="left:70px;top:20px">Terminal</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks" id="right_side_panel_tab_dd_components_button" onclick="open_tab(event, 'right_side_panel_tab_dd_components', this, '__editor_right_property_window__')"><i class="bi bi-building-add" style="color:#DDD;padding-top:1px;padding-left:1px"></i></button>
+                <span class="tooltiptext" style="left:70px;top:20px">D&amp;D Components</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks" id="right_side_panel_tab_primitive_button" onclick="open_tab(event, 'right_side_panel_tab_primitive', this, '__editor_right_property_window__')"><i class="bi bi-triangle" style="color:#0A3;padding-top:1px;padding-left:1px"></i></button>
+                <span class="tooltiptext" style="left:70px;top:20px">Primitives</span>
+              </div>
+              <div class="tooltip right_side_panel_tab_block">
+                <button class="tablinks" id="right_side_panel_tab_history_button" onclick="open_tab(event, 'right_side_panel_tab_history', this, '__editor_right_property_window__')"><i class="bi bi-list-columns-reverse" style="color:#AAA;padding-top:1px;padding-left:1px"></i></button>
+                <span class="tooltiptext" style="left:70px;top:20px">Pin/History</span>
+              </div>
+
+            </div>
+
+            <!-- </div> -->
+            <div style="float:left;width:calc(100% - 26px);height:100%;">
+
+              <!--  -------------------------------------------------- Tab Contents ----------------------------------------------------  -->
+              <div id="right_side_panel_tab_object" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div style="color:#888;text-align:center;padding:3px" data-i18n="g.there_is_no_item">There is no data</div>
+              </div>
+              <div id="right_side_panel_tab_multiple_objects" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div style="color:#888;text-align:center;padding:3px" data-i18n="g.there_is_no_item">There is no data</div>
+              </div>
+              <div id="right_side_panel_tab_light" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div style="color:#888;text-align:center;padding:3px" data-i18n="g.there_is_no_item">There is no data</div>
+              </div>
+              <div id="right_side_panel_tab_material" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div style="color:#888;text-align:center;padding:3px" data-i18n="g.there_is_no_item">There is no data</div>
+              </div>
+              <div id="right_side_panel_tab_morphing" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div style="color:#888;text-align:center;padding:3px" data-i18n="g.there_is_no_item">There is no data</div>
+              </div>
+              <div id="right_side_panel_tab_bone" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div style="color:#888;text-align:center;padding:3px" data-i18n="g.there_is_no_item">There is no data</div>
+              </div>
+              <div id="right_side_panel_tab_rigid_body" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div style="color:#888;text-align:center;padding:3px" data-i18n="g.there_is_no_item">There is no data</div>
+              </div>
+              <div id="right_side_panel_tab_constraint" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div style="color:#888;text-align:center;padding:3px" data-i18n="g.there_is_no_item">There is no data</div>
+              </div>
+              <div id="right_side_panel_tab_storage" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div>
+                  <div style="width: 100%;height: 20px;background: #000;display:flex;align-items: center;justify-content: center;font-size:12px">Cloud</div>
+                  <div style="padding-top:10px">
+                    <div style="width:100%;display:flex;align-items: center;justify-content: center;">
+                      <select name="external_storage" id="external_storage" value="native" style="margin-left:10px;width:90%" onchange="select_external_storage(event)">
+                        <option value="native">Native</option>
+                        <option value="local">Local</option>
+                        <option value="aws_s3">AWS S3</option>
+                        <option value="webdav">WebDav</option>
+                        <option value="websocketfs">WebSocketFS</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div id="aws_s3_panel" class="storage_panel_card">
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Region</div>
+                      <input class="storage_panel_item_value" id="aws_s3_region" data-type="aws_s3" type="text" value="" placeholder="Region">
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Bucket</div>
+                      <input class="storage_panel_item_value" id="aws_s3_bucket" data-type="aws_s3" type="text" value="" placeholder="Bucket">
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Key ID</div>
+                      <input class="storage_panel_item_value" id="aws_s3_accessKeyId" data-type="aws_s3" type="text" value="" placeholder="Access Key ID">
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Sec Key</div>
+                      <input class="storage_panel_item_value" id="aws_s3_secretAccessKey" data-type="aws_s3" type="password" value="" placeholder="Secret Access Key" autocomplete="off">
+                      <!-- <form>
+                        <input class="storage_panel_item_value" id="aws_s3_secretAccessKey" data-type="aws_s3"
+                          type="password" value="" placeholder="Secret Access Key" autocomplete="off">
+                      </form> -->
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Dir</div>
+                      <input class="storage_panel_item_value" id="aws_s3_workspace" data-type="aws_s3" type="text" value="assets" placeholder="Workspace">
+                    </div>
+                    <input class="storage_panel_item_value" type="hidden" id="aws_s3_last_file_browser_path" data-type="aws_s3" value="">
+                  </div>
+                  <div id="webdav_panel" class="storage_panel_card">
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">URL</div>
+                      <input class="storage_panel_item_value" id="webdav_url" data-type="webdav" type="text" value="" placeholder="URL">
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">User</div>
+                      <input class="storage_panel_item_value" id="webdav_username" data-type="webdav" type="text" value="" placeholder="Username">
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Pass</div>
+                      <!-- <form>
+                        <input class="storage_panel_item_value" id="webdav_password" data-type="webdav" type="password"
+                          value="" placeholder="Password" autocomplete="off">
+                      </form> -->
+                      <input class="storage_panel_item_value" id="webdav_password" data-type="webdav" type="password" value="" placeholder="Password" autocomplete="off">
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Auth</div>
+                      <select class="storage_panel_item_value" style="width: calc(100% - 50px);" id="webdav_auth_type" data-type="webdav" value="anonymous">
+                        <option value="anonymous">Anonymous</option>
+                        <option value="digest">Digest</option>
+                        <option value="basic_auth">Basic Auth</option>
+                      </select>
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Dir</div>
+                      <input class="storage_panel_item_value" id="webdav_workspace" data-type="webdav" type="text" value="/assets" placeholder="Workspace">
+                    </div>
+                    <input class="storage_panel_item_value" type="hidden" id="webdav_last_file_browser_path" data-type="webdav" value="">
+                  </div>
+                  <div id="websocketfs_panel" class="storage_panel_card">
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">URL</div>
+                      <input class="storage_panel_item_value" id="websocketfs_url" data-type="websocketfs" type="text" value="ws://localhost:39287" placeholder="URL">
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Dir</div>
+                      <input class="storage_panel_item_value" id="websocketfs_workspace" data-type="webdav" type="text" value="/" placeholder="Workspace">
+                    </div>
+                    <button style="width:calc(100% - 5px);margin-right:auto;margin-left:auto;margin-top:5px;" onclick="a=document.getElementById('websocketfs_url');a.value='ws://localhost:39287'">Localhost</button>
+                    <button style="width:calc(100% - 5px);margin-right:auto;margin-left:auto;margin-top:5px;" onclick="a=document.getElementById('websocketfs_url');a.value=(window.location.protocol == 'https:' ? 'wss://':'ws://') + window.location.host + window.location.pathname + 'wss'">SameOrigin</button>
+                    <input class="storage_panel_item_value" type="hidden" id="websocketfs_last_file_browser_path" data-type="websocketfs" value="">
+                  </div>
+                  <div id="google_drive_panel" class="storage_panel_card">
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Client ID</div>
+                      <input class="storage_panel_item_value" id="google_drive_client_id" data-type="google_drive" type="text" value="" placeholder="Client ID">
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">API Key</div>
+                      <form>
+                        <input class="storage_panel_item_value" id="google_drive_api_key" data-type="google_drive" type="password" value="" placeholder="API Key" autocomplete="off">
+                      </form>
+                    </div>
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Dir</div>
+                      <input class="storage_panel_item_value" id="google_drive_workspace" data-type="google_drive" type="text" value="/assets" placeholder="Workspace">
+                    </div>
+                    <input class="storage_panel_item_value" type="hidden" id="google_drive_last_file_browser_path" data-type="google_drive" value="">
+                  </div>
+                  <div id="local_panel" class="storage_panel_card">
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Dir</div>
+                      <input class="storage_panel_item_value" id="local_workspace" data-type="local" type="text" value="~/ddd" placeholder="Workspace">
+                    </div>
+                    <input class="storage_panel_item_value" type="hidden" id="local_last_file_browser_path" data-type="local" value="">
+                  </div>
+                  <div id="native_panel" class="storage_panel_card">
+                    <div class="storage_panel_item">
+                      <div class="storage_panel_item_key">Dir</div>
+                      <input class="storage_panel_item_value" id="native_workspace" data-type="native" type="text" value="None" placeholder="Workspace">
+                    </div>
+                    <input class="storage_panel_item_value" type="hidden" id="native_last_file_browser_path" data-type="native" value="">
+                  </div>
+                  <div style="color:red" id="storage_panel_error"></div>
+                </div>
+                <div style="margin-top:10px">
+                  <button style="width:calc(50% - 1px - 4px);margin-left:4px;float:left;overflow:hidden" onclick="ExternalIO.reset_external_storage()">Reset</button>
+                  <button style="width:calc(50% - 1px - 4px);margin-right:4px;float:right;overflow:hidden" onclick="ExternalIO.activate_external_storage(document.getElementById('external_storage').value)">Activate</button>
+                  <div style="clear:both"></div>
+                  <!-- <button style="width:calc(100% - 1px);margin-top:10px;display:none;color:#F94"
+                    id="copy_system_resource_to_external_storage_button"
+                    onclick="ExternalIO.copy_system_resource_to_external_storage()">* Update System Resources</button> -->
+                </div>
+              </div>
+              <div id="right_side_panel_tab_graphics" class="tabcontent scroll_y no_select scroll_bar" style="height:calc(100%);overflow-x:hidden"></div>
+              <div id="right_side_panel_tab_system" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden"></div>
+              <div id="right_side_panel_tab_terminal" class="tabcontent" style="height:100%">
+                <button style="position:absolute;right:3px;top:0px;width:17px;" onclick="terminal_clear()"><i class="bi bi-trash-fill"></i></button>
+                <div id="terminal" class="scroll_y text_select" onmouseup="on_right_click(event)" style="height:calc(70% - 30px);font-size:12px;font-family: monospace;width:(100% - 10px);padding:2px;padding-left:5px;padding-right:5px;display:block;background-color:#111;color:#eee;white-space:pre-wrap;word-break:break-all"></div>
+                <canvas id="terminal_canvas" style="width:100%;height:30%;outline:1px solid #444"></canvas>
+                <input style="width:100%;outline: 1px solid #444;text-indent: 6px;height:25px" placeholder="Interactive Console" id="terminal_interactive_console">
+              </div>
+              <div id="right_side_panel_tab_dd_components" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden"></div>
+              <div id="right_side_panel_tab_primitive" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div id="__editor_left_tool_panel__" style="position:relative;width:100%;height:calc(100%);overflow-y:scroll;overflow-x:hidden">-None-</div>
+              </div>
+              <div id="right_side_panel_tab_history" class="tabcontent scroll_y no_select" style="height:calc(100%);overflow-x:hidden">
+                <div style="height:calc(100% - 60px)">
+                  <div class="nowrap flex-center" style="width:100%;height:15px;background-color:#444;border-top:1px solid #555;border-bottom:1px solid #555;font-size:12px">Activities</div>
+                  <button style="width:100%;height:17px;font-size:12px;" class="nowrap flex-center" onclick="UI.check_file_exists_from_history()">Check all files exist</button>
+                  <div style="display:flex;align-items: center;justify-content: center;width:100%;height:22px;">
+                    <button class="nowrap flex-center" style="margin:0px;padding:0px;" onclick="UI.check_file_exists_from_history()"><i style="color:#AAA" class="bi bi-sm bi-arrow-repeat"></i></button>
+                    <button class="nowrap flex-center" style="margin:0px;margin-left:2px;padding:0px;" onclick="C.modal_ok_cancel(window.T('g.confirmation'),'Are you sure to clear all history?',{},(t)=>{if(t)UI.delete_all_project_history()})"><i style="color:#AAA" class="bi bi-sm bi-trash"></i></button>
+                    <button class="nowrap flex-center" style="margin:0px;margin-left:2px;padding:0px;" onclick="document.getElementById('__editor_activity_window_search_box__').focus()"><i style="color:#AAA" class="bi bi-sm bi-search"></i></button>
+                    <input id="__editor_activity_window_search_box__" style="width:calc(100% - 60px - 10px);margin-left:4px;height:15px;outline:1px solid #444;margin-right:4px">
+                    <datalist id="__editor_activity_window_search_data_list__"></datalist>
+                  </div>
+                  <div id="__editor_activity_window_content__" class="scroll_y"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="event_notify" class="horizontal_grad">Saving......</div>
+  </div>
+  <!-- <script src="./ddd/jsm/libs/ammo.wasm.js"></script> -->
+  <!-- <script src="./ddd/libs/rollup.browser.js"></script> -->
+  <!-- <script type="module" src="./ddd/ddd.js"></script> -->
+  <!--@INLINE_WEB@#./index.js#-->
+  <!-- <script src="https://unpkg.com/@rollup/browser/dist/rollup.browser.js"></script> -->
+  <!-- <script src="./ddd/libs/rollup.browser.js"></script> -->
+
+
+
+</body>
+
+</html>
